@@ -9,7 +9,7 @@ module Querylet
 
     # "|" is an Alternation which is the equivlent of an OR operator
     # .repeat means to match repeatly the following atoms
-    rule(:document) { item.repeat } #.as(:items) }
+    rule(:document) { item.repeat.as(:items) }
 
     rule(:item) { ifelse | block | partial | filter | variable | content }
 

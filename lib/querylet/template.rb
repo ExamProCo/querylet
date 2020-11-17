@@ -1,18 +1,19 @@
 #require_relative 'context'
 
 module Querylet
-  class Querylet
-    def initialize(qlet, ast)
-      @qlet = qlet
+  class Template
+    def initialize(querylet, ast)
+      @querylet = querylet
       @ast = ast
     end
 
     def call(args = nil)
-      #if args
-        #@qlet.set_context(args)
-      #end
+      if args
+        @querylet.set_context(args)
+      end
 
-      @ast.eval(@qlet)
-    end # def call
-  end # class Querylet
-end # module Querylet
+      # AST should return a Querylet::Tree and call its eval method
+      @ast.eval(@querylet)
+    end
+  end
+end

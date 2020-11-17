@@ -12,19 +12,13 @@ module Querylet
       end
     end
 
-    class Replacement < TreeItem.new(:item)
+    class Variable < TreeItem.new(:item)
       def _eval(context)
         if context.get_helper(item.to_s).nil?
           context.get(item.to_s)
         else
           context.get_helper(item.to_s).apply(context)
         end
-      end
-    end
-
-    class EscapedReplacement < Replacement
-      def _eval(context)
-        context.escaper.escape(super(context).to_s)
       end
     end
 
@@ -60,6 +54,18 @@ module Querylet
         context.escaper.escape(super(context).to_s)
       end
     end
+
+    class Block < TreeItem.new(:items)
+      def _eval(context)
+        items.map {|item| item._eval(context)}.join()
+      end
+      alias :fn :_eval
+
+      def add_item(i)
+        items << i
+      end
+    end
+
 
   end
 end

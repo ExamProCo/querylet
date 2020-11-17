@@ -6,76 +6,72 @@ RSpec.describe Querylet::Parser do
 
   context 'recognizes' do
     it 'content' do
-      expect(parser.parse('Deep Space Nine')).to eq([{content: 'Deep Space Nine'}])
+      expect(parser.parse('Deep Space Nine')).to eq({items:[{content: 'Deep Space Nine'}]})
     end
 
     it 'variable' do
-      expect(parser.parse('{{worf}}')).to eq([{variable: 'worf'}])
-      expect(parser.parse('{{ worf}}')).to eq([{variable: 'worf'}])
-      expect(parser.parse('{{worf }}')).to eq([{variable: 'worf'}])
-      expect(parser.parse('{{ worf }}')).to eq([{variable: 'worf'}])
+      expect(parser.parse('{{worf}}')).to eq({items:[{variable: 'worf'}]})
+      expect(parser.parse('{{ worf}}')).to eq({items:[{variable: 'worf'}]})
+      expect(parser.parse('{{worf }}')).to eq({items:[{variable: 'worf'}]})
+      expect(parser.parse('{{ worf }}')).to eq({items:[{variable: 'worf'}]})
     end
 
     it 'filter' do
-      expect(parser.parse('{{ quote worf }}')).to eq([{
+      expect(parser.parse('{{ quote worf }}')).to eq({items:[{
         filter: 'quote',
         parameter: {variable: 'worf'}
-      }])
+      }]})
 
-      expect(parser.parse("{{ quote 'worf' }}")).to eq([{
+      expect(parser.parse("{{ quote 'worf' }}")).to eq({items:[{
         filter: 'quote',
         parameter: {string: 'worf'}
-      }])
+      }]})
     end
 
     it 'partial' do
-      expect(parser.parse("{{> include 'path.to.template' }}")).to eq([{
+      expect(parser.parse("{{> include 'path.to.template' }}")).to eq({items:[{
         partial: 'include',
         path: 'path.to.template',
         parameters: []
-      }])
+      }]})
 
-      expect(parser.parse_with_debug("{{> include 'path.to.template' hello='world'}}")).to eq([{
+      expect(parser.parse_with_debug("{{> include 'path.to.template' hello='world'}}")).to eq({items:[{
         partial: 'include',
         path: 'path.to.template',
         parameters: [
           {key: 'hello', value: {string: 'world'}}
         ]
-      }])
+      }]})
 
-      expect(parser.parse("{{> include 'path.to.template' hello='world' star='trek' }}")).to eq([{
+      expect(parser.parse("{{> include 'path.to.template' hello='world' star='trek' }}")).to eq({items:[{
         partial: 'include',
         path: 'path.to.template',
         parameters: [
           {key: 'hello', value: {string: 'world'}},
           {key: 'star', value: {string: 'trek'}}
         ]
-      }])
+      }]})
     end
 
     it 'block' do
       results = parser.parse("{{#object}}this is a test{{/object}}")
-      expect(results).to eq([
-        { block: 'object' },
-        { content: 'this is a test' }
-      ])
+      expect(results).to eq({items:[
+        { block: 'object', items: [{ content: 'this is a test' }] }
+      ]})
     end
 
     it 'if' do
       results = parser.parse("{{#if hello}} this is true {{/if}}")
-      expect(results).to eq([
-        { if_variable: 'hello', if_kind: 'if'  },
-        { content: ' this is true ' }
-      ])
+      expect(results).to eq(
+        {:items=>[{:if_kind=>"if", :if_variable=>"hello", :items=>[{:content=>" this is true "}]}]}
+      )
     end
 
     it 'ifelse' do
       results = parser.parse_with_debug("{{#unless hello}}true{{/else}}false{{/if}}")
-      expect(results).to eq([
-        { if_variable: 'hello', if_kind: 'unless' },
-        { content: 'true' },
-        { else_item: [{ content: 'false' }]}
-      ])
+      expect(results).to eq(
+       {:items=>[{:else_item=>{:items=>[{:content=>"false"}]}, :if_kind=>"unless", :if_variable=>"hello", :items=>[{:content=>"true"}]}]}
+      )
     end
   end # context 'recognizes' do
 end
