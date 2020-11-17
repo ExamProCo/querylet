@@ -3,12 +3,13 @@ require 'parslet/convenience'
 
 module Querylet
   class Parser < Parslet::Parser
-    # Every parser has a root. This designates where parsing should start. It is like an entry point to your parser.
+    # Every parser has a root. This designates where parsing should start.
+    # It is like an entry point to your parser.
     root :document
 
     # "|" is an Alternation which is the equivlent of an OR operator
-    # .repeat means the to match repeatly the following atoms
-    rule(:document) { item.repeat }
+    # .repeat means to match repeatly the following atoms
+    rule(:document) { item.repeat } #.as(:items) }
 
     rule(:item) { ifelse | block | partial | filter | variable | content }
 
@@ -32,7 +33,7 @@ module Querylet
       path >>
       space? >>
       (
-        paramenter_kv >>
+        parameter_kv >>
         space?
       ).repeat.as(:parameters) >>
       space? >>
@@ -98,7 +99,7 @@ module Querylet
     rule(:parameter)   { id.as(:variable) | string }
 
     # used in includes eg. hello='world'
-    rule(:paramenter_kv) {
+    rule(:parameter_kv) {
       id.as(:key) >> 
       space? >>
       eq >>

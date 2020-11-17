@@ -40,16 +40,37 @@ https://www.sitepoint.com/parsing-parslet-gem/
 
 # Parset Debugging
 
+If the parser.rb runs into errors you can add the following to help
+debug what is happening
+
+```rb
 require 'parslet/convenience'
 parser.parse_with_debug(input)
+```
 
-## Running test suite
+### How it works:
 
-The best way to get an understanding of the snytax is taking a look at
-the `parser_helper.rb`.
+* parser.rb    — Create a grammar: What should be legal syntax?
+* transform.rb — Annotate the grammar: What is important data?
+* tree.rb      - Create a transformation: How do I want to work with that data?
 
-You can run the tests with the following command.
+## Parser
+
+Parslet parsers output deep nested hashes.
+
+To see all the define rules check out `parser_helper.rb`
 
 ```
 rspec spec/parser_helper.rb
 ```
+
+## Transform
+
+You capture patterns in your deep nested hash and the pass to a tree
+
+## Tree
+
+The tree does something with your captured patterns
+
+
+
