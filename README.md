@@ -17,8 +17,6 @@
 {{else}}
 {{/end}}
 
-
-
 ## Parslet
 
 https://www.youtube.com/watch?time_continue=873&v=ET_POMJNWNs&feature=emb_title
@@ -44,3 +42,14 @@ https://www.sitepoint.com/parsing-parslet-gem/
 
 require 'parslet/convenience'
 parser.parse_with_debug(input)
+
+## Running test suite
+
+The best way to get an understanding of the snytax is taking a look at
+the `parser_helper.rb`.
+
+You can run the tests with the following command.
+
+```
+rspec spec/parser_helper.rb
+```
