@@ -101,6 +101,56 @@ SQL
         expect(evaluate(template, {user_id: false})).to eq('no')
       end
 
+      it 'array block' do
+query = <<-SQL.chomp
+(SELECT COALESCE(array_to_json(array_agg(row_to_json(array_row))),'[]'::json) FROM (
+yes
+) array_row)
+SQL
+        template = "{{#array}}yes{{/array}}"
+        expect(evaluate(template)).to eq(query)
+      end
+
+      it 'object block' do
+query = <<-SQL.chomp
+(SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (
+yes
+) object_row)
+SQL
+        template = "{{#object}}yes{{/object}}"
+        expect(evaluate(template)).to eq(query)
+      end
+
+      it 'int filter' do
+        template = "{{int user_id}}"
+        expect(evaluate(template,{user_id: 2})).to eq('2')
+      end
+
+      it 'float filter' do
+        template = "{{float user_id}}"
+        expect(evaluate(template,{user_id: 2.2})).to eq('2.2')
+      end
+
+      it 'arr filter' do
+        template = "{{arr ids}}"
+        expect(evaluate(template,{ids: [1,2,3,4,5]})).to eq("1,2,3,4,5")
+      end
+
+      it 'arr filter' do
+        template = "{{arr values}}"
+        expect(evaluate(template,{values: ['hello','world']})).to eq("'hello','world'")
+      end
+
+      it 'str filter' do
+        template = "{{str world}}"
+        expect(evaluate(template,world: 'banana')).to eq("'banana'")
+      end
+
+      it 'wildcard filter' do
+        template = "{{wild email}}"
+        expect(evaluate(template,{email: 'andrew@exampro.co'})).to eq("'%andrew@exampro.co%'")
+      end
+
     end # context 'helpers'
   end # context 'evaluating'
 end

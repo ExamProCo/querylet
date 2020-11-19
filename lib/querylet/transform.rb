@@ -39,7 +39,21 @@ module Querylet
       Tree::Partial.new(partial, path, parameters)
     }
 
-    rule(items: subtree(:items)) {Tree::Block.new(items)}
+    rule(
+      filter: simple(:filter),
+      parameter: subtree(:parameter)
+    ) {
+      Tree::Filter.new(filter,parameter)
+    }
+
+    rule(
+      block: simple(:block),
+      items: subtree(:items)
+    ) {
+      Tree::Block.new(block,items)
+    }
+
+    rule(items: subtree(:items)) {Tree::Items.new(items)}
   end
 end
 

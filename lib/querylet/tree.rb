@@ -111,7 +111,73 @@ module Querylet
       end
     end
 
-    class Block < TreeItem.new(:items)
+    class Filter < TreeItem.new(:filter,:parameter)
+      def _eval(context)
+        val = context.get_variable(parameter.item)
+        if filter == 'int'
+          if val.is_a?(Integer)
+            val.to_s
+          else
+            raise "expected input for: #{parameter.item} to be an Integer"
+          end
+        elsif filter == 'float'
+          if val.is_a?(Float)
+            val.to_s
+          else
+            raise "expected input for: #{parameter.item} to be a Float"
+          end
+        elsif filter == 'arr'
+          if val.is_a?(Array)
+            if val.all?{|a| a.class.to_s == 'String' } # to_a? was not working
+              "'#{val.join("','")}'"
+            elsif val.all?{|a| a.is_a?(Integer) }
+              val.join(',')
+            elsif val.all?{|a| a.is_a?(Float) }
+              val.join(',')
+            else
+              raise "expected input for: #{parameter.item} to be an Array with all of the same datatype eg String, Integer, Float"
+            end
+          else
+            raise "expected input for: #{parameter.item} to be an Array"
+          end
+        elsif filter == 'str'
+          if val.class.to_s == 'String' # to_a? was not working
+            "'#{val}'"
+          else
+            raise "expected input for: #{parameter.item} to be a String"
+          end
+        elsif filter == 'wild'
+          if val.class.to_s == 'String' || val.is_a?(Integer) || val.is_a?(Float)
+            "'%#{val}%'"
+          else
+            raise "expected input for: #{parameter.item} to be String, Integer or Array"
+          end
+        end
+      end
+    end
+
+    class Block < TreeItem.new(:block,:items)
+      def _eval(context)
+        content = items.map {|item| item._eval(context)}.join()
+        if block == 'array'
+        <<-HEREDOC.chomp
+(SELECT COALESCE(array_to_json(array_agg(row_to_json(array_row))),'[]'::json) FROM (
+#{content}
+) array_row)
+      HEREDOC
+        elsif block == 'object'
+        <<-HEREDOC.chomp
+(SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (
+#{content}
+) object_row)
+      HEREDOC
+        else
+          content
+        end
+      end
+    end
+
+    class Items < TreeItem.new(:items)
       def _eval(context)
         items.map {|item| item._eval(context)}.join()
       end
