@@ -60,7 +60,22 @@ module Querylet
         [parameters].flatten.map(&:values).map do |vals|
           context.add_item vals.first.to_s, vals.last._eval(context)
         end
-        context.get_partial partial.to_s, path
+        content = context.get_partial(partial.to_s, path)
+        if partial == 'array'
+        <<-HEREDOC.chomp
+(SELECT COALESCE(array_to_json(array_agg(row_to_json(array_row))),'[]'::json) FROM (
+#{content}
+) array_row)
+        HEREDOC
+        elsif partial == 'object'
+        <<-HEREDOC.chomp
+(SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (
+#{content}
+) object_row)
+      HEREDOC
+        elsif partial == 'include'
+          content
+        end
       end
     end
 
