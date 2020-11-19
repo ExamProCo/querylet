@@ -2,7 +2,7 @@ require_relative '../lib/querylet/parser'
 require 'pry'
 
 RSpec.describe Querylet::Parser do
-  let(:parser) {Querylet::Parser.new}
+  let(:parser) {Querylet::Parser.new() }
 
   context 'recognizes' do
     it 'content' do

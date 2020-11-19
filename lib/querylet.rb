@@ -9,7 +9,8 @@ require_relative 'querylet/helpers'
 module Querylet
   class Querylet
     include Context
-    def initialize()
+    def initialize(path:)
+      @sql_path = path
       @helpers = {}
       register_default_helpers
     end
@@ -17,8 +18,11 @@ module Querylet
     def compile(content)
       parser    = Parser.new
       transform = Transform.new
+      puts "compile: #{content}"
       deep_nested_hash = parser.parse(content)
+      puts deep_nested_hash
       abstract_syntax_tree = transform.apply deep_nested_hash
+      puts abstract_syntax_tree
       Template.new self, abstract_syntax_tree
     end
 
@@ -34,13 +38,14 @@ module Querylet
       @helpers[name.to_s] = Helper.new(self, fn)
     end
 
+    def get_partial name, dot_path
+      path = @sql_path + '/' + dot_path.to_s.split('.').join('/') + '.sql'
+      template = File.read(path).to_s.chomp
+      self.compile(template).call(@data)
+    end
 
     private
     def register_default_helpers
-      self.register_helper(self.registry_name) do |context, parameters, block, else_block|
-        self.apply(context, parameters, block, else_block)
-      end if self.respond_to?(:apply)
-
       self.register_helper :include        , &(Helpers.method(:helper_include).to_proc)
       self.register_helper :paginate       , &(Helpers.method(:helper_paginate).to_proc)
       self.register_helper :paginate_offset, &(Helpers.method(:helper_paginate_offset).to_proc)
@@ -50,7 +55,6 @@ module Querylet
       self.register_helper :float          , &(Helpers.method(:helper_float).to_proc)
       self.register_helper :array          , &(Helpers.method(:helper_array).to_proc)
       self.register_helper :object         , &(Helpers.method(:helper_object).to_proc)
-
     end
 
   end # class Querylet

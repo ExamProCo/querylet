@@ -60,10 +60,21 @@ module Querylet
       #Tree::Helper.new(name, parameters, items)
     #}
 
+    rule(
+      partial: simple(:partial),
+      path: simple(:path),
+      parameters: subtree(:parameters),
+    ) {
+      Tree::Partial.new(partial, path, parameters)
+    }
+
     #rule(
       #helper_name: simple(:name),
-      #parameters: subtree(:parameters),
-    #)
+      #parameters: subtree(:parameters)
+    #) {
+      #Tree::PartialWithArgs.new(partial_name, arguments)
+    #}
+
     rule(items: subtree(:items)) {Tree::Block.new(items)}
   end
 end

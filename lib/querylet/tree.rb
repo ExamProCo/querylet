@@ -55,6 +55,15 @@ module Querylet
       end
     end
 
+    class Partial < TreeItem.new(:partial, :path, :arguments)
+      def _eval(context)
+        [arguments].flatten.map(&:values).map do |vals|
+          context.add_item vals.first.to_s, vals.last._eval(context)
+        end
+        context.get_partial partial.to_s, path
+      end
+    end
+
     class Block < TreeItem.new(:items)
       def _eval(context)
         items.map {|item| item._eval(context)}.join()
@@ -65,7 +74,6 @@ module Querylet
         items << i
       end
     end
-
 
   end
 end
