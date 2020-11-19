@@ -15,9 +15,9 @@ module Querylet
       #Tree::Replacement.new(item)
     #}
 
-    #rule(str_content: simple(:content)) {
-      #Tree::String.new(content)
-    #}
+    rule(string: simple(:content)) {
+      Tree::String.new(content)
+    }
 
     #rule(parameter_name: simple(:name)) {
       #Tree::Parameter.new(name)
@@ -59,6 +59,23 @@ module Querylet
     #) {
       #Tree::Helper.new(name, parameters, items)
     #}
+    #
+    rule(
+      if_kind: simple(:if_kind),
+      if_variable: simple(:variable),
+      items: subtree(:items),
+      else_item: subtree(:else_items)
+    ) {
+      Tree::IfElseBlock.new(if_kind, variable, items, else_items)
+    }
+
+    rule(
+      if_kind: simple(:if_kind),
+      if_variable: simple(:variable),
+      items: subtree(:items)
+    ) {
+      Tree::IfBlock.new(if_kind, variable, items)
+    }
 
     rule(
       partial: simple(:partial),

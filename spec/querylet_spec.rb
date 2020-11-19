@@ -52,10 +52,25 @@ query = <<-SQL.chomp
   'andrew' as name
 FROM users
 WHERE
-  users.id = 100) as email
+  users.id = 200) as email
 SQL
-        template = "({{> include 'examples.include_with_params' name='andrew' }}) as email"
+        template = "({{> include 'examples.include_with_params' id='200' name='andrew' }}) as email"
         expect(evaluate(template, {id: 100})).to eq(query)
+      end
+
+      it 'block' do
+        template = "{{#if user_id }}yes{{/if}}"
+        expect(evaluate(template, {user_id: true})).to eq('yes')
+      end
+
+      it 'block' do
+        template = "{{#unless user_id }}yes{{/unless}}"
+        expect(evaluate(template, {user_id: nil})).to eq('yes')
+      end
+
+      it 'block' do
+        template = "{{#if user_id }}yes{{/else}}no{{/if}}"
+        expect(evaluate(template, {user_id: false})).to eq('no')
       end
 
     end # context 'helpers'

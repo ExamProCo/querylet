@@ -1,6 +1,6 @@
 SELECT
   users.email,
-  {{name}} as name
+  '{{name}}' as name
 FROM users
 WHERE
   users.id = {{id}}

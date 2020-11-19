@@ -55,12 +55,44 @@ module Querylet
       end
     end
 
-    class Partial < TreeItem.new(:partial, :path, :arguments)
+    class Partial < TreeItem.new(:partial, :path, :parameters)
       def _eval(context)
-        [arguments].flatten.map(&:values).map do |vals|
+        [parameters].flatten.map(&:values).map do |vals|
           context.add_item vals.first.to_s, vals.last._eval(context)
         end
         context.get_partial partial.to_s, path
+      end
+    end
+
+    class IfBlock < TreeItem.new(:if_kind, :variable, :items)
+      def _eval(context)
+        if if_kind == 'if'
+          if context.get_variable(variable)
+            items.map {|item| item._eval(context)}.join()
+          end
+        elsif if_kind == 'unless'
+          unless context.get_variable(variable)
+            items.map {|item| item._eval(context)}.join()
+          end
+        end
+      end
+    end
+
+    class IfElseBlock < TreeItem.new(:if_kind, :variable, :items, :else_items)
+      def _eval(context)
+        if if_kind == 'if'
+          if context.get_variable(variable)
+            items.map {|item| item._eval(context)}.join()
+          else
+            else_items.items.map {|item| item._eval(context)}.join()
+          end
+        elsif if_kind == 'unless'
+          unless context.get_variable(variable)
+            items.map {|item| item._eval(context)}.join()
+          else
+            else_items.items.map {|item| item._eval(context)}.join()
+          end
+        end
       end
     end
 

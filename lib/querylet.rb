@@ -44,6 +44,10 @@ module Querylet
       self.compile(template).call(@data)
     end
 
+    def get_variable key
+      @data[key.to_sym]
+    end
+
     private
     def register_default_helpers
       self.register_helper :include        , &(Helpers.method(:helper_include).to_proc)
