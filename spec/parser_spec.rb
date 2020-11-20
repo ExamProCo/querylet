@@ -9,6 +9,11 @@ RSpec.describe Querylet::Parser do
       expect(parser.parse('Deep Space Nine')).to eq({items:[{content: 'Deep Space Nine'}]})
     end
 
+    it 'string' do 
+      (SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (
+
+      expect(parser.parse_with_debug("(SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (")).to eq({items:[{content: "(SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM ("}]})
+    end
     it 'variable' do
       expect(parser.parse('{{worf}}')).to eq({items:[{variable: 'worf'}]})
       expect(parser.parse('{{ worf}}')).to eq({items:[{variable: 'worf'}]})
@@ -35,7 +40,7 @@ RSpec.describe Querylet::Parser do
         parameters: []
       }]})
 
-      expect(parser.parse_with_debug("{{> include 'path.to.template' hello='world'}}")).to eq({items:[{
+      expect(parser.parse("{{> include 'path.to.template' hello='world'}}")).to eq({items:[{
         partial: 'include',
         path: 'path.to.template',
         parameters: [

@@ -111,6 +111,7 @@ module Querylet
     rule(:content) {
       (
         nocurly.repeat(1) | # A sequence of non-curlies
+        ocurly >> ccurly >> nocurly | # Open and closing curely that doesn't complete a {{}}
         ocurly >> nocurly | # Opening curly that doesn't start a {{}}
         ccurly            | # Closing curly that is not inside a {{}}
         ocurly >> eof       # Opening curly that doesn't start a {{}} because it's the end
