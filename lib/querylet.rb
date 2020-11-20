@@ -31,9 +31,5 @@ module Querylet
       template = File.read(path).to_s.chomp
       self.compile(template).call(@data)
     end
-
-    def get_variable key
-      @data[key.to_sym]
-    end
   end # class Querylet
 end # module Querylet

@@ -14,7 +14,7 @@ module Querylet
 
     class Variable < TreeItem.new(:item)
       def _eval(context)
-        context.get_variable(item)
+        context.get(item)
       end
     end
 
@@ -61,11 +61,11 @@ module Querylet
     class IfBlock < TreeItem.new(:if_kind, :variable, :items)
       def _eval(context)
         if if_kind == 'if'
-          if context.get_variable(variable)
+          if context.get(variable)
             items.map {|item| item._eval(context)}.join()
           end
         elsif if_kind == 'unless'
-          unless context.get_variable(variable)
+          unless context.get(variable)
             items.map {|item| item._eval(context)}.join()
           end
         end
@@ -75,13 +75,13 @@ module Querylet
     class IfElseBlock < TreeItem.new(:if_kind, :variable, :items, :else_items)
       def _eval(context)
         if if_kind == 'if'
-          if context.get_variable(variable)
+          if context.get(variable)
             items.map {|item| item._eval(context)}.join()
           else
             else_items.items.map {|item| item._eval(context)}.join()
           end
         elsif if_kind == 'unless'
-          unless context.get_variable(variable)
+          unless context.get(variable)
             items.map {|item| item._eval(context)}.join()
           else
             else_items.items.map {|item| item._eval(context)}.join()
@@ -92,7 +92,7 @@ module Querylet
 
     class Filter < TreeItem.new(:filter,:parameter)
       def _eval(context)
-        val = context.get_variable(parameter.item)
+        val = context.get(parameter.item)
         if filter == 'int'
           if val.is_a?(Integer)
             val.to_s
