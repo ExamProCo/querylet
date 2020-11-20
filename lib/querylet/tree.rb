@@ -49,12 +49,6 @@ module Querylet
       end
     end
 
-    class EscapedHelper < Helper
-      def _eval(context)
-        context.escaper.escape(super(context).to_s)
-      end
-    end
-
     class Partial < TreeItem.new(:partial, :path, :parameters)
       def _eval(context)
         [parameters].flatten.map(&:values).map do |vals|

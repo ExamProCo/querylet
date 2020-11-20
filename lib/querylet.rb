@@ -18,11 +18,11 @@ module Querylet
     def compile(content)
       parser    = Parser.new
       transform = Transform.new
-      puts "compile: #{content}"
+      #puts "compile: #{content}"
       deep_nested_hash = parser.parse(content)
-      puts deep_nested_hash
+      #puts deep_nested_hash
       abstract_syntax_tree = transform.apply deep_nested_hash
-      puts abstract_syntax_tree
+      #puts abstract_syntax_tree
       Template.new self, abstract_syntax_tree
     end
 
