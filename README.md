@@ -1,4 +1,49 @@
-## Querylet
+# Querylet
+
+## Variable Filters
+ 
+### Int (Integer)
+
+Cast variable to integer
+
+```
+{{int my_number}}
+```
+
+### Str (String)
+
+Cast variable to string
+
+```
+{{str my_string}}
+```
+
+### Float
+
+Cast variable to float
+
+```
+{{float my_number}}
+```
+
+### Arr (Array)
+
+Cast to array (not a postgres array)
+
+```
+{{arr my_array}}
+```
+
+### Wild (Wildcard)
+
+Wildcard front and back of string
+
+```
+{{wild my_string}}
+```
+
+
+
 
 #Variables
 
