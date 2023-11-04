@@ -10,8 +10,6 @@ RSpec.describe Querylet::Parser do
     end
 
     it 'string' do 
-      (SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (
-
       expect(parser.parse_with_debug("(SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (")).to eq({items:[{content: "(SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM ("}]})
     end
     it 'variable' do

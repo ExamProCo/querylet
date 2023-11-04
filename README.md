@@ -108,12 +108,10 @@ parser.parse_with_debug(input)
 
 ## Parser
 
-Parslet parsers output deep nested hashes.
-
-To see all the define rules check out `parser_helper.rb`
+To see all the define rules check out `parser_spec.rb`
 
 ```
-rspec spec/parser_helper.rb
+bundle exec rspec spec/parser_spec.rb
 ```
 
 ## Transform
