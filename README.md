@@ -42,25 +42,32 @@ Wildcard front and back of string
 {{wild my_string}}
 ```
 
+### Variables
 
-
-
-#Variables
-
+```
 {{my_variable}}
+```
 
-#Partials
+### Partials
 
+```
 {{>include 'link.to.path' param='{{testing}}'}}
+```
 
-#Partial blocks
+### Partial blocks
+
+```
 {{#array}}
 {{/array}}
+```
 
-# If Else
+### If Else
+
+```
 {{#if variable}}
 {{else}}
 {{/end}}
+```
 
 ## Parslet
 
