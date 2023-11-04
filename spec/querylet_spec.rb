@@ -83,6 +83,27 @@ SQL
         expect(evaluate(template, {my_name: "Andrew", id: 100})).to eq(query)
       end
 
+      it 'variable overrides' do
+query = <<-SQL.chomp
+(SELECT
+  questions.id,
+  (SELECT que.id FROM questions que WHERE que.id = 555) as sub
+FROM questions
+WHERE
+  questions.id = 100
+SQL
+
+template = <<-TEMPLATE.chomp
+(SELECT
+  questions.id,
+  {{> include 'examples.vars_overrides_include' id={{sub_id}} }} as sub
+FROM questions
+WHERE
+  questions.id = {{id}}
+TEMPLATE
+        expect(evaluate(template, {sub_id: 555, id: 100})).to eq(query)
+      end
+
       it 'object' do
 query = <<-SQL.chomp
 (SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (

@@ -12,15 +12,17 @@ module Querylet
       hash.map { |k, v| add_item(k, v) }
     end
 
-    def with_temporary_context(args = {})
-      saved = args.keys.collect { |key| [key, get(key.to_s)] }.to_h
+    # This never appears to be used
+    # commented out unless I find a use for it.
+    #def with_temporary_context(args = {})
+    #  saved = args.keys.collect { |key| [key, get(key.to_s)] }.to_h
 
-      add_items(args)
-      block_result = yield
-      locals.merge!(saved)
+    #  add_items(args)
+    #  block_result = yield
+    #  locals.merge!(saved)
 
-      block_result
-    end
+    #  block_result
+    #end
 
     private
 

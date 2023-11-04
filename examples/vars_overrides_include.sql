@@ -1,0 +1,1 @@
+SELECT que.id FROM questions que WHERE que.id = {{id}}
