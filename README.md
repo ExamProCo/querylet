@@ -14,7 +14,7 @@ SELECT
     case_study_questions.menu,
     case_study_questions.questions_pool_size,
 
-    CASE {{quote sub_question_type}}
+    CASE {{str sub_question_type}}
     WHEN 'MultiChoiceQuestion' THEN
       {{> object 'questions.multiple_choice' id='{{sub_question_id}}' }} as question
     WHEN 'MultiSelectQuestion' THEN
@@ -94,7 +94,9 @@ Wildcard front and back of string
 ### Partials
 
 ```
-{{>include 'link.to.path' param='{{testing}}'}}
+{{> include 'link.to.path' name='andrew' }}
+{{> include 'link.to.path' name={{my_name}} }}
+{{> include 'link.to.path' name={{str my_name}} }}
 ```
 
 ### Partial blocks

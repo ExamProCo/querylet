@@ -12,6 +12,7 @@ RSpec.describe Querylet::Parser do
     it 'string' do 
       expect(parser.parse_with_debug("(SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (")).to eq({items:[{content: "(SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM ("}]})
     end
+
     it 'variable' do
       expect(parser.parse('{{worf}}')).to eq({items:[{variable: 'worf'}]})
       expect(parser.parse('{{ worf}}')).to eq({items:[{variable: 'worf'}]})
@@ -50,8 +51,24 @@ RSpec.describe Querylet::Parser do
         partial: 'include',
         path: 'path.to.template',
         parameters: [
-          {key: 'hello', value: {string: 'world'}},
-          {key: 'star', value: {string: 'trek'}}
+          {key: 'hello', value: { string: 'world'}},
+          {key: 'star' , value: { string: 'trek'}}
+        ]
+      }]})
+
+      expect(parser.parse("{{> include 'path.to.template' hello={{world}} }}")).to eq({items:[{
+        partial: 'include',
+        path: 'path.to.template',
+        parameters: [
+          {key: 'hello', value: { variable: 'world'}}
+        ]
+      }]})
+
+      expect(parser.parse("{{> include 'path.to.template' hello={{int world}} }}")).to eq({items:[{
+        partial: 'include',
+        path: 'path.to.template',
+        parameters: [
+          {key: 'hello', value: {filter: 'int', parameter: {variable: 'world'} }}
         ]
       }]})
     end

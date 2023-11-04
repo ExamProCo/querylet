@@ -131,6 +131,8 @@ module Querylet
           else
             raise "expected input for: #{parameter.item} to be String, Integer or Array"
           end
+        else
+          raise "unexpected filter name: #{filter}"
         end
       end
     end

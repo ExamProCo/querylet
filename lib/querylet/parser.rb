@@ -96,7 +96,7 @@ module Querylet
     rule(:variable) { docurly >> space? >> id.as(:variable) >> space? >> dccurly}
 
     # Can either be a variable or a string:
-    rule(:parameter)   { id.as(:variable) | string }
+    rule(:parameter) {  id.as(:variable) | string }
 
     # used in includes eg. hello='world'
     rule(:parameter_kv) {
@@ -104,7 +104,7 @@ module Querylet
       space? >>
       eq >>
       space? >>
-      string.as(:value) >>
+      (filter | variable | string).as(:value) >>
       space?
     }
 
@@ -147,7 +147,7 @@ module Querylet
     rule(:nocurly)     { match('[^{}]') }
     rule(:eof)         { any.absent? }
 
-    # String contained in Single Qoutes 'content'
+    # String contained in Single Quotes 'content'
     rule(:string)   { match("'") >> match("[^']").repeat(1).as(:string) >> match("'") }
   end
 end

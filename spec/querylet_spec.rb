@@ -58,6 +58,31 @@ SQL
         expect(evaluate(template, {id: 100})).to eq(query)
       end
 
+      it 'include with parameters variable' do
+query = <<-SQL.chomp
+(SELECT
+  users.email
+FROM users
+WHERE
+  users.id = 300) as email
+SQL
+        template = "({{> include 'examples.include_with_params_vars' id={{user_id}} name='andrew' }}) as email"
+        expect(evaluate(template, {user_id: 300})).to eq(query)
+      end
+
+      it 'include with parameters filter' do
+query = <<-SQL.chomp
+(SELECT
+  users.email,
+  'Andrew' as name
+FROM users
+WHERE
+  users.id = 100) as email
+SQL
+        template = "({{> include 'examples.include_with_params_filter' name={{str my_name}} }}) as email"
+        expect(evaluate(template, {my_name: "Andrew", id: 100})).to eq(query)
+      end
+
       it 'object' do
 query = <<-SQL.chomp
 (SELECT COALESCE(row_to_json(object_row),'{}'::json) FROM (
