@@ -1,5 +1,48 @@
 # Querylet
 
+Querylet is a templating language for SQL
+and is designed to make writing raw SQL much easier.
+
+```sql
+SELECT
+  questions.id,
+  questions.uuid,
+  questions.question_html as question,
+  questions.target_type as kind,
+  {{#object}}
+  SELECT
+    case_study_questions.menu,
+    case_study_questions.questions_pool_size,
+
+    CASE {{quote sub_question_type}}
+    WHEN 'MultiChoiceQuestion' THEN
+      {{> object 'questions.multiple_choice' id='{{sub_question_id}}' }} as question
+    WHEN 'MultiSelectQuestion' THEN
+      {{> object 'questions.multiple_select' id='{{sub_question_id}}' }} as question
+    END,
+
+    {{#array}}
+      SELECT
+        que.id,
+        que.uuid,
+        que.target_type as kind,
+        choices.comment,
+        choices.flagged,
+        choices.choice_value as answered,
+        multiple_select_questions.answers_count
+      FROM ts_admin_que.questions que
+      LEFT JOIN public.choices ON choices.question_id = que.id AND choices.attempt_id = {{id}}
+      LEFT JOIN ts_admin_que.multiple_select_questions ON multiple_select_questions.id = que.target_id AND que.target_type = 'MultipleSelectQuestion'
+      WHERE
+        que.id = ANY(case_study_questions.question_ids)
+    {{/array}} as questions
+  {{/object}} as case_study
+FROM ts_admin_que.questions
+LEFT JOIN ts_admin_que.case_study_questions ON case_study_questions.question_id = questions.id
+WHERE
+  questions.id = {{id}}
+```
+
 ## Variable Filters
  
 ### Int (Integer)
