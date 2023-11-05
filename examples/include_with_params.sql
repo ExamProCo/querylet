@@ -1,6 +1,1 @@
-SELECT
-  users.email,
-  '{{name}}' as name
-FROM users
-WHERE
-  users.id = {{id}}
+SELECT users.email, '{{name}}' as name FROM users WHERE users.id = {{id}}

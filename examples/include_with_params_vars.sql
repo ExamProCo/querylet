@@ -1,5 +1,1 @@
-SELECT
-  users.email
-FROM users
-WHERE
-  users.id = {{id}}
+SELECT users.email FROM users WHERE users.id = {{id}}
