@@ -1,5 +1,10 @@
 module Querylet
-  module Context
+  class Context
+    def initialize(querylet, data)
+      @querylet = querylet
+      @data = data
+    end
+
     def get(value)
       @data.merge(locals)[value.to_sym]
     end
@@ -10,6 +15,10 @@ module Querylet
 
     def add_items(hash)
       hash.map { |k, v| add_item(k, v) }
+    end
+
+    def get_partial name, dot_path, data
+      @querylet.get_partial name, dot_path, @data.merge(data)
     end
 
     # This never appears to be used

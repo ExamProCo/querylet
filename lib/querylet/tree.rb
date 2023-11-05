@@ -36,10 +36,12 @@ module Querylet
 
     class Partial < TreeItem.new(:partial, :path, :parameters)
       def _eval(context)
+        data = {}
         [parameters].flatten.map(&:values).map do |vals|
-          context.add_item vals.first.to_s, vals.last._eval(context)
+          # we have to set it as sym so it overrides correctly
+          data[vals.first.to_sym] = vals.last._eval(context)
         end
-        content = context.get_partial(partial.to_s, path)
+        content = context.get_partial(partial.to_s, path, data)
         if partial == 'array'
         <<-HEREDOC.chomp
 (SELECT COALESCE(array_to_json(array_agg(row_to_json(array_row))),'[]'::json) FROM (

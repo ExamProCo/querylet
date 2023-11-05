@@ -6,7 +6,6 @@ require_relative 'querylet/context'
 
 module Querylet
   class Querylet
-    include Context
     def initialize(path:)
       @sql_path = path
     end
@@ -19,17 +18,15 @@ module Querylet
       #puts deep_nested_hash
       abstract_syntax_tree = transform.apply deep_nested_hash
       #puts abstract_syntax_tree
+
+      # Querylet::Template
       Template.new self, abstract_syntax_tree
     end
 
-    def set_context(ctx)
-      @data = ctx
-    end
-
-    def get_partial name, dot_path
+    def get_partial name, dot_path, data={}
       path = @sql_path + '/' + dot_path.to_s.split('.').join('/') + '.sql'
       template = File.read(path).to_s.chomp
-      self.compile(template).call(@data)
+      self.compile(template).call(data)
     end
   end # class Querylet
 end # module Querylet
